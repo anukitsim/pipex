@@ -1,0 +1,66 @@
+# PIPEX DEFENSE RUN SHEET
+
+# --- 1. SETUP ---
+make re
+echo -e "apple\nbanana\ncherry" > infile
+touch locked_file
+chmod 000 locked_file
+
+# ==========================================
+
+# --- TEST 1: Standard Success ---
+
+# 1. Run Shell (Reference)
+< infile ls -l /bin | wc -l > outfile_shell
+
+# 2. Run Pipex
+./pipex infile "ls -l /bin" "wc -l" outfile_pipex
+
+# 3. Check (Should be silent if identical)
+diff outfile_shell outfile_pipex
+
+# ==========================================
+
+# --- TEST 2: Absolute Paths ---
+
+# 1. Run Shell
+< infile /bin/ls /bin | /usr/bin/wc -l > outfile_shell
+
+# 2. Run Pipex
+./pipex infile "/bin/ls /bin" "/usr/bin/wc -l" outfile_pipex
+
+# 3. Check
+diff outfile_shell outfile_pipex
+
+# ==========================================
+
+# --- TEST 3: Bad Command ---
+# Explanation: "Command 2 does not exist. Expecting 'command not found' error."
+
+# 1. Run Pipex
+./pipex infile "ls -l" "wrongcmd" outfile_pipex
+
+# 2. Verify Exit Code (Should be 127)
+echo $?
+
+# ==========================================
+
+# --- TEST 4: Non-Existent Input ---
+# Explanation: "Input file is missing. Expecting 'No such file' error."
+
+# 1. Run Pipex
+./pipex ghost_file "ls -l" "wc -l" outfile_pipex
+
+# ==========================================
+
+# --- TEST 5: Permission Denied ---
+# Explanation: "Input file is locked. Expecting 'Permission denied' error."
+
+# 1. Run Pipex
+./pipex locked_file "ls -l" "wc -l" outfile_pipex
+
+# ==========================================
+
+# --- CLEANUP (After defense) ---
+rm outfile_shell outfile_pipex infile locked_file
+make fclean
