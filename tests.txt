@@ -9,6 +9,19 @@ PIPEX DEFENSE TESTS (Simple & Clear)
 
 echo "one\ntwo\nthree\nfour\nthree\none\n" > infile
 
+# ==========================================
+# TEST 0 — Invalid number of arguments
+# Program should print an error and exit non-zero
+# ==========================================
+
+# Too few arguments
+./pipex infile "cat" "wc -l"
+echo Exit status: $?
+
+# Too many arguments
+./pipex infile "cat" "wc -l" out extra
+echo Exit status: $?
+
 
 # ==========================================
 # TEST 1 — Simple pipeline
