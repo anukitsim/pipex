@@ -1,66 +1,106 @@
-# PIPEX DEFENSE RUN SHEET
+==========================================
+PIPEX DEFENSE TESTS (Simple & Clear)
+==========================================
 
-# --- 1. SETUP ---
-make re
-echo -e "apple\nbanana\ncherry" > infile
-touch locked_file
-chmod 000 locked_file
 
-# ==========================================
+# ------------------------------------------
+# Prepare input file
+# ------------------------------------------
 
-# --- TEST 1: Standard Success ---
+printf "one\ntwo\nthree\nfour\nthree\none\n" > infile
 
-# 1. Run Shell (Reference)
-< infile ls -l /bin | wc -l > outfile_shell
-
-# 2. Run Pipex
-./pipex infile "ls -l /bin" "wc -l" outfile_pipex
-
-# 3. Check (Should be silent if identical)
-diff outfile_shell outfile_pipex
 
 # ==========================================
-
-# --- TEST 2: Absolute Paths ---
-
-# 1. Run Shell
-< infile /bin/ls /bin | /usr/bin/wc -l > outfile_shell
-
-# 2. Run Pipex
-./pipex infile "/bin/ls /bin" "/usr/bin/wc -l" outfile_pipex
-
-# 3. Check
-diff outfile_shell outfile_pipex
-
+# TEST 1 — Simple pipeline
+# Count how many lines contain "one"
 # ==========================================
 
-# --- TEST 3: Bad Command ---
-# Explanation: "Command 2 does not exist. Expecting 'command not found' error."
+# Shell command
+< infile grep one | wc -l > out_shell
 
-# 1. Run Pipex
-./pipex infile "ls -l" "wrongcmd" outfile_pipex
+# Pipex command
+./pipex infile "grep one" "wc -l" out_pipex
 
-# 2. Verify Exit Code (Should be 127)
-echo $?
+# Compare results
+diff -u out_shell out_pipex && echo "OK"
 
-# ==========================================
-
-# --- TEST 4: Non-Existent Input ---
-# Explanation: "Input file is missing. Expecting 'No such file' error."
-
-# 1. Run Pipex
-./pipex ghost_file "ls -l" "wc -l" outfile_pipex
 
 # ==========================================
-
-# --- TEST 5: Permission Denied ---
-# Explanation: "Input file is locked. Expecting 'Permission denied' error."
-
-# 1. Run Pipex
-./pipex locked_file "ls -l" "wc -l" outfile_pipex
-
+# TEST 2 — Commands with flags
+# Sort lines then count unique occurrences
 # ==========================================
 
-# --- CLEANUP (After defense) ---
-rm outfile_shell outfile_pipex infile locked_file
-make fclean
+# Shell command
+< infile sort | uniq -c > out_shell
+
+# Pipex command
+./pipex infile "sort" "uniq -c" out_pipex
+
+# Compare results
+diff -u out_shell out_pipex && echo "OK"
+
+
+# ==========================================
+# TEST 3 — Larger input
+# Shows pipe works with more data
+# ==========================================
+
+seq 1 5000 > infile_big
+
+# Shell command
+< infile_big grep 4999 | wc -l > out_shell
+
+# Pipex command
+./pipex infile_big "grep 4999" "wc -l" out_pipex
+
+# Compare results
+diff -u out_shell out_pipex && echo "OK"
+
+
+# ==========================================
+# TEST 4 — Missing input file (error test)
+# Program should print error and exit
+# ==========================================
+
+./pipex nofile "cat" "wc -l" out
+echo Exit status: $?
+
+
+# ==========================================
+# TEST 5 — Command not found (error test)
+# ==========================================
+
+./pipex infile "notacommand" "wc -l" out
+echo Exit status: $?
+
+
+# ==========================================
+# TEST 6 — Permission error on output
+# ==========================================
+
+touch locked
+chmod 000 locked
+
+./pipex infile "cat" "wc -l" locked
+echo Exit status: $?
+
+chmod 644 locked
+
+
+# ==========================================
+# TEST 7 — No hanging pipes
+# Program should finish immediately
+# ==========================================
+
+printf "hello\n" > infile2
+
+./pipex infile2 "cat" "cat" out_pipex
+echo DONE
+
+
+# ==========================================
+# TEST 8 — No extra output
+# Should print nothing on success
+# ==========================================
+
+./pipex infile "grep three" "wc -l" out_pipex

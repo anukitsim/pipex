@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by atsimint.*
+_This project has been created as part of the 42 curriculum by atsimint._
 
 ## Description
 
@@ -21,4 +21,7 @@ Example: `./pipex infile "ls -l" "wc -l" outfile`
 
 ## AI use
 
-AI was used for understanding pipe/fork/dup2 behaviour, testing edge cases, and Norm compliance checks. Implementation and design choices are the author’s.
+AI was used as a learning and support tool for:
+
+- Understanding pipe, fork, dup2, and process flow behaviour
+- Generating example test commands for manual validation
