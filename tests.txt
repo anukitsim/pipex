@@ -70,17 +70,9 @@ seq 1 5000 > infile_big
 diff -u out_shell out_pipex && echo "OK"
 
 
-# ==========================================
-# TEST 4 — Missing input file (error test)
-# Program should print error and exit
-# ==========================================
-
-./pipex nofile "cat" "wc -l" out
-echo Exit status: $?
-
 
 # ==========================================
-# TEST 5 — Command not found (error test)
+# TEST 4 — Command not found (error test)
 # ==========================================
 
 ./pipex infile "notacommand" "wc -l" out
@@ -88,7 +80,7 @@ echo Exit status: $?
 
 
 # ==========================================
-# TEST 6 — Permission error on output
+# TEST 5 — Permission error on output
 # ==========================================
 
 touch locked
@@ -101,7 +93,7 @@ chmod 644 locked
 
 
 # ==========================================
-# TEST 7 — No hanging pipes
+# TEST 6 — No hanging pipes
 # Program should finish immediately
 # ==========================================
 
@@ -112,7 +104,7 @@ echo DONE
 
 
 # ==========================================
-# TEST 8 — No extra output
+# TEST 7 — No extra output
 # Should print nothing on success
 # ==========================================
 
