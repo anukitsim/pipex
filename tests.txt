@@ -92,7 +92,7 @@ chmod 644 locked
 # Program should finish immediately
 # ==========================================
 
-printf "hello\n" > infile2
+echo "hello\n" > infile2
 
 ./pipex infile2 "cat" "cat" out_pipex
 echo DONE

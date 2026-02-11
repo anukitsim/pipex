@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atsimint <atsimint@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anukitsimintia <anukitsimintia@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 00:00:00 by atsimint          #+#    #+#             */
-/*   Updated: 2025/02/10 00:00:00 by atsimint         ###   ########.fr       */
+/*   Updated: 2026/02/11 15:56:19 by anukitsimin      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	first_child(int *pipe_fd, char **argv, char **envp)
 
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-		error_handling("infile");
+		error_handling(argv[1]);
 	dup2(fd, 0);
 	dup2(pipe_fd[1], 1);
 	close(pipe_fd[0]);
@@ -34,7 +34,7 @@ void	second_child(int *pipe_fd, char **argv, char **envp)
 
 	fd = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
-		error_handling("outfile");
+		error_handling(argv[4]);
 	dup2(pipe_fd[0], 0);
 	dup2(fd, 1);
 	close(pipe_fd[1]);
