@@ -7,7 +7,7 @@ PIPEX DEFENSE TESTS (Simple & Clear)
 # Prepare input file
 # ------------------------------------------
 
-printf "one\ntwo\nthree\nfour\nthree\none\n" > infile
+echo "one\ntwo\nthree\nfour\nthree\none\n" > infile
 
 
 # ==========================================
